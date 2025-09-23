@@ -1,6 +1,6 @@
 # IoT Monitoring System
 
-A comprehensive IoT monitoring and control system using ESP32, featuring a modern web interface and powerful backend API with advanced NoSQL query capabilities.
+A comprehensive IoT monitoring and control system using ESP8266, featuring a modern web interface and powerful backend API with MySQL query capabilities.
 
 ## Table of Contents
 
