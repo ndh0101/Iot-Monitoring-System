@@ -167,14 +167,12 @@ ESP8266 Pin Connections:
    Edit parameters in [`esp8266_arduino/esp8266_arduino.ino`](esp8266_arduino/esp8266_arduino.ino) file:
 
 ```cpp
-// WiFi Configuration
-const char *wifiSsid = "YOUR_WIFI_SSID";
-const char *wifiPassword = "YOUR_WIFI_PASSWORD";
-
-// MQTT Configuration (Mosquitto)
-const char *mqttServer = "your-ip-address";
-const char *mqttUsername = "your-mosquitto-username";
-const char *mqttPassword = "your-mosquitto-password";
+#define SSID "wifi-name"           // Tên mạng WiFi
+#define PASSWORD "wifi-password"   // Mật khẩu WiFi
+#define MQTT_SERVER "ip-address"   // Địa chỉ IP của MQTT Server
+#define MQTT_PORT 1883             // Cổng kết nối tới Mosquitto
+#define mqtt_user "username"       // Username cài đặt trong Mosquitto
+#define mqtt_pass "password"       // Password cài đặt trong Mosquitto
 ```
 
 4. **Upload code to ESP8266**
