@@ -113,28 +113,33 @@ export default function Dashboard(){
 	}
 
 	function StatusBar({ value, max, type }) {
-		let color = '#22c55e' // xanh
+		let color = '#22c55e'
 		if (type === 'temperature') {
-			if (value > 35) color = '#ef4444'
-			else if (value > 25) color = '#eab308'
+			if (value > 35) color = '#ff0000'
+			else if (value >= 30 && value <= 35) color = '#ff9900'
+			else if (value >= 20 && value < 30) color = '#00ff00'
+			else if (value >= 0 && value < 20) color = '#0000ff'
 		} else if (type === 'humidity') {
-			if (value < 20 || value > 85) color = '#ef4444'
-			else if (value < 40 || value > 70) color = '#eab308'
+			if (value >= 50 && value <= 70) color = '#ef4444'
+			else if (value < 50 && value >= 30) color = '#ffff00'
+			else if (value < 30 && value >= 0) color = '#ffffcc'
+			else if (value > 70) color = '#0000ff'
 		} else if (type === 'light') {
-			if (value < 100 || value > 800) color = '#ef4444'
-			else if (value < 200 || value > 600) color = '#eab308'
+			if (value <= 100) color = '#000000'
+			else if (value > 100 && value <= 500) color = '#808080'
+			else if (value > 500 && value <= 800) color = '#cccc66'
+			else if (value > 800 && value <= 1024) color = '#ffff00'
 		}
-
 		return (
-			<div style={{ height: 6, background: '#e5e7eb', borderRadius: 4, marginTop: 4 }}>
-			<div style={{
-			  	width: `${Math.min(100, (value / max) * 100)}%`,
-				background: color,
-				height: '100%',
-				borderRadius: 4,
-				transition: 'width .3s ease'
-			}} />
-			</div>
+		<div className="status-bar">
+			<div
+				className="status-bar-fill"
+				style={{
+				width: `${Math.min(100, (value / max) * 100)}%`,
+				background: color
+				}}
+			/>
+		</div>
 		)
 	}
 
