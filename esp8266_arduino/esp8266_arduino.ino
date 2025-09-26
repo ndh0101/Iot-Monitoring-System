@@ -6,12 +6,12 @@
 #include <WiFiUdp.h>
 #include <ctime>
 
-#define SSID "0789095999"     // Tên mạng WiFi
-#define PASSWORD "88888888"        // Mật khẩu WiFi
-#define MQTT_SERVER "192.168.1.14" // Địa chỉ IP của MQTT Server
-#define MQTT_PORT 1883             // Cổng kết nối tới Mosquitto
-#define mqtt_user "Ost007"         // Username cài đặt trong Mosquitto
-#define mqtt_pass "Hoang2004"      // Password cài đặt trong Mosquitto
+#define SSID "your-wifi-name"          // Tên mạng WiFi
+#define PASSWORD "your-wifi-password"  // Mật khẩu WiFi
+#define MQTT_SERVER "your-ip-address"  // Địa chỉ IP của MQTT Server
+#define MQTT_PORT 1883                 // Cổng kết nối tới Mosquitto
+#define mqtt_user "your-username"      // Username cài đặt trong Mosquitto
+#define mqtt_pass "your-password"      // Password cài đặt trong Mosquitto
 
 // Các chân GPIO trên ESP8266 được sử dụng
 #define FAN D5
