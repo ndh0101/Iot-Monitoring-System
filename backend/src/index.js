@@ -12,10 +12,10 @@ const Action = require('./model/action.model');
 const mqtt = require('mqtt');
 const options = {
     port: 1883,
-    host: '192.168.1.14',
+    host: 'your-ip-address',
     clientId: 'webClient',
-    username: 'Ost007',
-    password: 'Hoang2004'
+    username: 'your-username',
+    password: 'your-password'
 };
 // Check connection to MQTT broker
 const mqttClient = mqtt.connect(options);
