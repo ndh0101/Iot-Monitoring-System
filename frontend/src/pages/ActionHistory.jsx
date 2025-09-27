@@ -67,98 +67,82 @@ export default function ActionHistory(){
 		<div>
 			<div className="header"><h1>Action History</h1></div>
 			<div className="card">
-				{/* Search UI */}
-				<div style={{display:'flex',gap:16,alignItems:'end',marginBottom:16,flexWrap:'wrap'}}>
+				{/* Search + Sort + Filter UI */}
+				<div style={{display:'flex',justifyContent:'space-between',alignItems:'end',marginBottom:16,flexWrap:'wrap',gap:16}}>
+				{/* Left: Search */}
+				<div style={{display:'flex',gap:16,alignItems:'end',flexWrap:'wrap'}}>
 					<div>
-						<label style={{display:'block',marginBottom:4,fontWeight:500}}>Tìm kiếm:</label>
-						<input 
-							className="input" 
-							placeholder="Tìm kiếm theo thông số" 
-							value={search} 
-							onChange={e=>setSearch(e.target.value)} 
-							style={{width:150}}
-						/>
+					<label style={{display:'block',marginBottom:4,fontWeight:500}}>Tìm kiếm:</label>
+					<input 
+						className="input" 
+						placeholder="Tìm kiếm theo thông số" 
+						value={search} 
+						onChange={e=>setSearch(e.target.value)} 
+						style={{width:150}}
+					/>
 					</div>
 					<div>
-						<label style={{display:'block',marginBottom:4,fontWeight:500}}>Tìm kiếm theo:</label>
-						<select 
-							className="input" 
-							value={searchBy} 
-							onChange={e=>setSearchBy(e.target.value)}
-							style={{width:120}}
-						>
-							<option value="id">ID</option>
-							<option value="time">Thời gian</option>
-						</select>
+					<label style={{display:'block',marginBottom:4,fontWeight:500}}>Tìm kiếm theo:</label>
+					<select 
+						className="input" 
+						value={searchBy} 
+						onChange={e=>setSearchBy(e.target.value)}
+						style={{width:120}}
+					>
+						<option value="id">ID</option>
+						<option value="time">Thời gian</option>
+					</select>
 					</div>
 					<button 
-						onClick={onSearch}
-						style={{
-							background:'#1E2F62',
-							color:'white',
-							border:'none',
-							padding:'10px 20px',
-							borderRadius:'8px',
-							cursor:'pointer',
-							fontWeight:500
-						}}
+					onClick={onSearch}
+					style={{
+						background:'#1E2F62',
+						color:'white',
+						border:'none',
+						padding:'10px 20px',
+						borderRadius:'8px',
+						cursor:'pointer',
+						fontWeight:500
+					}}
 					>
-						Tìm kiếm
+					Tìm kiếm
 					</button>
 				</div>
-				{/* Sort + Filter UI */}
-				<div style={{display:'flex',gap:16,alignItems:'end',marginBottom:16,flexWrap:'wrap'}}>
+
+				{/* Right: Sort + Filter */}
+				<div style={{display:'flex',gap:16,alignItems:'end',flexWrap:'wrap'}}>
 					<div>
-						<label style={{display:'block',marginBottom:4,fontWeight:500}}>Sắp xếp theo:</label>
-						<select 
-							className="input" 
-							value={sortBy} 
-							onChange={e=>setSortBy(e.target.value)}
-							style={{width:150}}
-						>
-							<option value="id">ID</option>
-							<option value="time">Thời gian</option>
-						</select>
+					<label style={{display:'block',marginBottom:4,fontWeight:500}}>Sắp xếp theo:</label>
+					<select className="input" value={sortBy} onChange={e=>setSortBy(e.target.value)} style={{width:150}}>
+						<option value="id">ID</option>
+						<option value="time">Thời gian</option>
+					</select>
 					</div>
 					<div>
-						<label style={{display:'block',marginBottom:4,fontWeight:500}}>Thứ tự:</label>
-						<select 
-							className="input" 
-							value={order} 
-							onChange={e=>setOrder(e.target.value)}
-							style={{width:120}}
-						>
-							<option value="ASC">Tăng dần</option>
-							<option value="DESC">Giảm dần</option>
-						</select>
+					<label style={{display:'block',marginBottom:4,fontWeight:500}}>Thứ tự:</label>
+					<select className="input" value={order} onChange={e=>setOrder(e.target.value)} style={{width:120}}>
+						<option value="ASC">Tăng dần</option>
+						<option value="DESC">Giảm dần</option>
+					</select>
 					</div>
 					<div>
-						<label style={{display:'block',marginBottom:4,fontWeight:500}}>Thiết bị:</label>
-						<select 
-							className="input" 
-							value={device} 
-							onChange={e=>{ setDevice(e.target.value); setPage(1) }}
-							style={{width:150}}
-						>
-							<option value="all">Tất cả</option>
-							<option value="lamp">Đèn</option>
-							<option value="air">Điều hòa</option>
-							<option value="fan">Quạt</option>
-						</select>
+					<label style={{display:'block',marginBottom:4,fontWeight:500}}>Thiết bị:</label>
+					<select className="input" value={device} onChange={e=>{ setDevice(e.target.value); setPage(1) }} style={{width:150}}>
+						<option value="all">Tất cả</option>
+						<option value="lamp">Đèn</option>
+						<option value="air">Điều hòa</option>
+						<option value="fan">Quạt</option>
+					</select>
 					</div>
 					<div>
-						<label style={{display:'block',marginBottom:4,fontWeight:500}}>Trạng thái:</label>
-						<select 
-							className="input" 
-							value={status} 
-							onChange={e=>{ setStatus(e.target.value); setPage(1) }}
-							style={{width:120}}
-						>
-							<option value="all">Tất cả</option>
-							<option value="on">Bật</option>
-							<option value="off">Tắt</option>
-						</select>
+					<label style={{display:'block',marginBottom:4,fontWeight:500}}>Trạng thái:</label>
+					<select className="input" value={status} onChange={e=>{ setStatus(e.target.value); setPage(1) }} style={{width:120}}>
+						<option value="all">Tất cả</option>
+						<option value="on">Bật</option>
+						<option value="off">Tắt</option>
+					</select>
 					</div>
+				</div>
 				</div>
 				{/* Error */}
 				{error && <div style={{color:'#b91c1c',marginBottom:8}}>Lỗi: {error}</div>}
