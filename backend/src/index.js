@@ -29,8 +29,28 @@ mqttClient.on('message', (topic, message) => {
         Sensor.insertData(JSON.parse(message.toString()), (result) =>{});
     }
     else if (topic === 'actionPub') {
-        console.log('Client Receive: %s', message.toString());
+        //console.log('Client Receive: %s', message.toString());
         Action.insertData(JSON.parse(message.toString()), (result) =>{});
+    }
+    if (topic === "status/esp8266") {
+        const status = message.toString();
+        console.log("ESP8266 status:", status);
+        if (status === "offline") {
+            const reset = { fan:false, air:false, lamp:false }
+            wss.clients.forEach(client => {
+                if (client.readyState === WebSocket.OPEN) {
+                client.send(JSON.stringify({ type:"device_disconnected", ...reset }))
+                }
+            })
+        }
+        if (status === "online") {
+            const reset = { fan:false, air:false, lamp:false }
+            wss.clients.forEach(client => {
+                if (client.readyState === WebSocket.OPEN) {
+                client.send(JSON.stringify({ type:"device_connected", ...reset }))
+                }
+            })
+        }
     }
     wss.clients.forEach((client) => {
         if (client.readyState === WebSocket.OPEN) {
