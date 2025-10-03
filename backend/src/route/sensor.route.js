@@ -12,13 +12,14 @@ module.exports = function(router) {
      * @swagger
      * /api/sensor/getinfo:
      *   get:
-     *     summary: Lấy thông tin số lượng sensor (đếm, số trang,...)
+     *     summary: Lấy thông tin số lượng sensor + số trang
      *     tags: [Sensor]
      *     parameters:
      *       - in: query
      *         name: size
      *         schema:
      *           type: integer
+     *         description: Số lượng phần tử trên mỗi trang
      *     responses:
      *       200:
      *         description: Thông tin sensor
@@ -48,20 +49,24 @@ module.exports = function(router) {
      *         name: page
      *         schema:
      *           type: integer
+     *         description: Số thứ tự của trang
      *       - in: query
      *         name: size
      *         schema:
      *           type: integer
+     *         description: Số lượng phần tử trên mỗi trang
      *       - in: query
      *         name: sortBy
      *         schema:
      *           type: string
      *           enum: [id, temperature, humidity, light, time]
+     *         description: Thuộc tính sắp xếp
      *       - in: query
      *         name: order
      *         schema:
      *           type: string
      *           enum: [ASC, DESC]
+     *         description: Thứ tự sắp xếp
      *     responses:
      *       200:
      *         description: Dữ liệu sensor theo trang
@@ -79,29 +84,35 @@ module.exports = function(router) {
      *         name: type
      *         schema:
      *           type: string
-     *           enum: [id, temperature, humidity, light, time]
+     *           enum: [all, id, temperature, humidity, light, time]
+     *         description: Loại tìm kiếm
      *       - in: query
      *         name: search
      *         schema:
      *           type: string
+     *         description: Từ khóa tìm kiếm
      *       - in: query
      *         name: page
      *         schema:
      *           type: integer
+     *         description: Số thứ tự của trang
      *       - in: query
      *         name: size
      *         schema:
      *           type: integer
+     *         description: Số lượng phần tử trên mỗi trang
      *       - in: query
      *         name: sortBy
      *         schema:
      *           type: string
      *           enum: [id, temperature, humidity, light, time]
+     *         description: Thuộc tính sắp xếp
      *       - in: query
      *         name: order
      *         schema:
      *           type: string
      *           enum: [ASC, DESC]
+     *         description: Thứ tự sắp xếp
      *     responses:
      *       200:
      *         description: Kết quả tìm kiếm sensor
