@@ -51,7 +51,7 @@ void setup_wifi() {
 // Kết nối ESP8266 với MQTT broker và thiết lập callback
 void setup_mqtt() {
   mqttClient.setServer(MQTT_SERVER, MQTT_PORT);
-  mqttClient.connect("esp8266", mqtt_user, mqtt_pass);
+  mqttClient.connect("esp8266", mqtt_user, mqtt_pass, "status/esp8266", 0, true, "offline");
   mqttClient.setCallback(data_sub);
 }
 // Khởi tạo, cấu hình TG với NTPClient, thiết lập múi giờ
@@ -168,6 +168,7 @@ void setup() {
   randomSeed(micros()); // Khởi tạo seed cho hàm random() bằng giá trị micros() để tạo số ngẫu nhiên
   setup_wifi();         // Kết nối ESP8266 với mạng WiFi
   setup_mqtt();         // Kết nối ESP8266 với MQTT broker và thiết lập callback
+  mqttClient.publish("status/esp8266", "online", true); // Thông báo kết nối ESP8266 với Mosquitto
   setup_time();         // Khởi tạo NTPClient để đồng bộ hóa thời gian
 }
 void loop() {
