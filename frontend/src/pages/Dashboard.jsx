@@ -16,11 +16,13 @@ export default function Dashboard(){
 	const chartRef = useRef(null)
 	const chartInstanceRef = useRef(null)
 	const [kpi, setKpi] = useState({ temperature: 0, humidity: 0, light: 0 })
+	const timeoutsRef = useRef({})
 	// Khởi tạo state từ localStorage
 	const [state, setState] = useState(() => {
 		const saved = localStorage.getItem("deviceState")
 		return saved ? JSON.parse(saved) : { fan: false, air: false, lamp: false }
 	})
+	const [loading, setLoading] = useState({ fan: false, air: false, lamp: false })
 
 	// Mỗi khi state thay đổi thì lưu vào localStorage
 	useEffect(() => {
@@ -39,11 +41,33 @@ export default function Dashboard(){
 	}, [])
 
 	useEffect(() => {
+		const off = onMessage((data) => {
+		if (data.type === "device_connected" || data.type === "device_disconnected") {
+			const reset = { fan:false, air:false, lamp:false }
+			setState(reset)
+			localStorage.setItem("deviceState", JSON.stringify(reset))
+		}
+		if (['fan','air','lamp'].includes(data.device_id)) {
+			setState(s => ({ ...s, [data.device_id]: data.status === 'on' }))
+			setLoading(l => ({ ...l, [data.device_id]: false }))
+		}
+		})
+		return off
+	}, [])
+
+	useEffect(() => {
 		connect()
 		const off = onMessage((data) => {
-			if(['fan','air','lamp'].includes(data.device_id)){
-				setState(s => ({...s, [data.device_id]: data.status === 'on'}))
+		if(['fan','air','lamp'].includes(data.device_id)){
+			// clear timeout nếu có
+			if (timeoutsRef.current[data.device_id]) {
+				clearTimeout(timeoutsRef.current[data.device_id])
+				delete timeoutsRef.current[data.device_id]
 			}
+			// cập nhật state và tắt loading
+			setState(s => ({...s, [data.device_id]: data.status === 'on'}))
+			setLoading(l => ({...l, [data.device_id]: false}))
+		}
 		})
 		return off
 	}, [])
@@ -108,8 +132,17 @@ export default function Dashboard(){
 
 	function toggle(device){
 		const next = !state[device]
-		setState(s => ({...s, [device]: next}))
-		sendAction({ device_id: device, status: next ? 'on' : 'off', time: new Date().toLocaleString('sv-SE').replace('T',' ').slice(0,19) })
+		setLoading(l => ({...l, [device]: true}))
+		sendAction({ 
+			device_id: device, 
+			status: next ? 'on' : 'off', 
+			time: new Date().toLocaleString('sv-SE').replace('T',' ').slice(0,19) 
+		})
+		// đặt timeout: nếu không có phản hồi thì reset
+		if (timeoutsRef.current[device]) clearTimeout(timeoutsRef.current[device])
+		timeoutsRef.current[device] = setTimeout(() => {
+			setLoading(l => ({...l, [device]: false})) // tắt loading
+		}, 3000)
 	}
 
 	function StatusBar({ value, max, type }) {
@@ -120,7 +153,7 @@ export default function Dashboard(){
 			else if (value >= 20 && value < 30) color = '#00ff00'
 			else if (value >= 0 && value < 20) color = '#0000ff'
 		} else if (type === 'humidity') {
-			if (value >= 50 && value <= 70) color = '#ef4444'
+			if (value >= 50 && value <= 70) color = '#99ffcc'
 			else if (value < 50 && value >= 30) color = '#ffff00'
 			else if (value < 30 && value >= 0) color = '#ffffcc'
 			else if (value > 70) color = '#0000ff'
@@ -169,17 +202,29 @@ export default function Dashboard(){
 					<div className="toggle">
 						<FaFan size={40} className={state.fan ? "spin" : ""} style={{color: state.fan ? "#3b82f6" : "#9ca3af"}} />
 						<span>Quạt</span>
-						<input className="switch" type="checkbox" checked={state.fan} onChange={() => toggle('fan')} />
+						{loading.fan ? (
+							<span className="loader"></span>
+						) : (
+							<input className="switch" type="checkbox" checked={state.fan} onChange={() => toggle('fan')} />
+						)}
 					</div>
 					<div className="toggle">
-						<FaSnowflake size={40} className={state.air ? "pulse" : ""} style={{color: state.air ? "#06b6d4" : "#9ca3af"}} />
+						<FaSnowflake size={40} style={{color: state.air ? "#0ea5e9" : "#9ca3af"}} />
 						<span>Điều hòa</span>
-						<input className="switch" type="checkbox" checked={state.air} onChange={() => toggle('air')} />
+						{loading.air ? (
+							<span className="loader"></span>
+						) : (
+							<input className="switch" type="checkbox" checked={state.air} onChange={() => toggle('air')} />
+						)}
 					</div>
 					<div className="toggle">
 						<FaLightbulb size={40} style={{color: state.lamp ? "#facc15" : "#9ca3af"}} />
 						<span>Đèn</span>
-						<input className="switch" type="checkbox" checked={state.lamp} onChange={() => toggle('lamp')} />
+						{loading.lamp ? (
+							<span className="loader"></span>
+						) : (
+							<input className="switch" type="checkbox" checked={state.lamp} onChange={() => toggle('lamp')} />
+						)}
 					</div>
 				</div>
 			</div>
