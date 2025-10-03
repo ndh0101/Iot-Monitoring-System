@@ -61,7 +61,15 @@ getSearch = (table, type, search, page, size, sortBy, order, result) => {
     const pageSize = Number(size) > 0 ? Number(size) : 10;
     const offset = (pageNum - 1) * pageSize;
     let condition;
-    if (type === "time") {
+    if (type === "all") {
+        condition = `(
+            \`id\` LIKE '%${search}%' OR 
+            \`temperature\` LIKE '%${search}%' OR 
+            \`humidity\` LIKE '%${search}%' OR 
+            \`light\` LIKE '%${search}%' OR 
+            DATE_FORMAT(\`time\`, '%Y-%m-%d %H:%i:%s') LIKE '%${search}%'
+        )`;
+    } else if (type === "time") {
         condition = `DATE_FORMAT(\`${type}\`, '%Y-%m-%d %H:%i:%s') LIKE '%${search}%'`;
     } else {
         condition = `\`${type}\` LIKE '%${search}%'`;
@@ -77,7 +85,15 @@ getSearch = (table, type, search, page, size, sortBy, order, result) => {
 getSearchInfo = (table, type, search, size, result) => {
     const pageSize = Number(size) > 0 ? Number(size) : 10;
     let condition;
-    if (type === "time") {
+    if (type === "all") {
+        condition = `(
+            \`id\` LIKE '%${search}%' OR 
+            \`temperature\` LIKE '%${search}%' OR 
+            \`humidity\` LIKE '%${search}%' OR 
+            \`light\` LIKE '%${search}%' OR 
+            DATE_FORMAT(\`time\`, '%Y-%m-%d %H:%i:%s') LIKE '%${search}%'
+        )`;
+    } else if (type === "time") {
         condition = `DATE_FORMAT(\`${type}\`, '%Y-%m-%d %H:%i:%s') LIKE '%${search}%'`;
     } else {
         condition = `\`${type}\` LIKE '%${search}%'`;
