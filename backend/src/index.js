@@ -44,12 +44,13 @@ mqttClient.on('message', (topic, message) => {
             })
         }
         if (status === "online") {
-            const reset = { fan:false, air:false, lamp:false }
-            wss.clients.forEach(client => {
-                if (client.readyState === WebSocket.OPEN) {
-                client.send(JSON.stringify({ type:"device_connected", ...reset }))
-                }
-            })
+            setTimeout(() => {
+                wss.clients.forEach(client => {
+                    if (client.readyState === WebSocket.OPEN) {
+                    client.send(JSON.stringify({ type:"device_connected"}))
+                    }
+                })
+            }, 1500); // wait for 1,5 seconds
         }
     }
     wss.clients.forEach((client) => {
