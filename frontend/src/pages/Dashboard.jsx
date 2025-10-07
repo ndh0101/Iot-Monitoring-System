@@ -22,7 +22,9 @@ export default function Dashboard(){
 		const saved = localStorage.getItem("deviceState")
 		return saved ? JSON.parse(saved) : { fan: false, air: false, lamp: false }
 	})
+	// Cập nhật lại trạng thái: const [state, setState] = useState({ fan: false, air: false, lamp: false })
 	const [loading, setLoading] = useState({ fan: false, air: false, lamp: false })
+	const [displayState, setDisplayState] = useState(state)
 
 	// Mỗi khi state thay đổi thì lưu vào localStorage
 	useEffect(() => {
@@ -42,15 +44,32 @@ export default function Dashboard(){
 
 	useEffect(() => {
 		const off = onMessage((data) => {
-		if (data.type === "device_connected" || data.type === "device_disconnected") {
-			const reset = { fan:false, air:false, lamp:false }
-			setState(reset)
-			localStorage.setItem("deviceState", JSON.stringify(reset))
-		}
-		if (['fan','air','lamp'].includes(data.device_id)) {
-			setState(s => ({ ...s, [data.device_id]: data.status === 'on' }))
-			setLoading(l => ({ ...l, [data.device_id]: false }))
-		}
+			if (data.type === "device_disconnected") {
+				setDisplayState({ fan:false, air:false, lamp:false })
+			} else if (data.type === "device_connected") {
+				const saved = localStorage.getItem("deviceState")
+				if (saved) {
+					const prevState = JSON.parse(saved)
+					setDisplayState(prevState)
+					for (const device in prevState) {
+						sendAction({ 
+							device_id: device, 
+							status: prevState[device] ? "on" : "off", 
+							time: new Date().toLocaleString('sv-SE').replace('T', ' ').slice(0, 19) 
+						})
+					}
+					setState(JSON.parse(saved))
+				}
+			}
+			else if (['fan','air','lamp'].includes(data.device_id)) {
+				setState(s => {
+					const updated = { ...s, [data.device_id]: data.status === 'on' }
+					localStorage.setItem("deviceState", JSON.stringify(updated))
+					setDisplayState(updated)
+					return updated
+				})
+				setLoading(l => ({ ...l, [data.device_id]: false }))
+			}
 		})
 		return off
 	}, [])
@@ -58,16 +77,16 @@ export default function Dashboard(){
 	useEffect(() => {
 		connect()
 		const off = onMessage((data) => {
-		if(['fan','air','lamp'].includes(data.device_id)){
-			// clear timeout nếu có
-			if (timeoutsRef.current[data.device_id]) {
-				clearTimeout(timeoutsRef.current[data.device_id])
-				delete timeoutsRef.current[data.device_id]
+			if(['fan','air','lamp'].includes(data.device_id)){
+				// clear timeout nếu có
+				if (timeoutsRef.current[data.device_id]) {
+					clearTimeout(timeoutsRef.current[data.device_id])
+					delete timeoutsRef.current[data.device_id]
+				}
+				// cập nhật state và tắt loading
+				setState(s => ({...s, [data.device_id]: data.status === 'on'}))
+				setLoading(l => ({...l, [data.device_id]: false}))
 			}
-			// cập nhật state và tắt loading
-			setState(s => ({...s, [data.device_id]: data.status === 'on'}))
-			setLoading(l => ({...l, [data.device_id]: false}))
-		}
 		})
 		return off
 	}, [])
@@ -200,30 +219,30 @@ export default function Dashboard(){
 				</div>
 				<div className="right">
 					<div className="toggle">
-						<FaFan size={40} className={state.fan ? "spin" : ""} style={{color: state.fan ? "#3b82f6" : "#9ca3af"}} />
+						<FaFan size={40} className={displayState.fan ? "spin" : ""} style={{color: displayState.fan ? "#3b82f6" : "#9ca3af"}} />
 						<span>Quạt</span>
 						{loading.fan ? (
 							<span className="loader"></span>
 						) : (
-							<input className="switch" type="checkbox" checked={state.fan} onChange={() => toggle('fan')} />
+							<input className="switch" type="checkbox" checked={displayState.fan} onChange={() => toggle('fan')} />
 						)}
 					</div>
 					<div className="toggle">
-						<FaSnowflake size={40} style={{color: state.air ? "#0ea5e9" : "#9ca3af"}} />
+						<FaSnowflake size={40} style={{color: displayState.air ? "#0ea5e9" : "#9ca3af"}} />
 						<span>Điều hòa</span>
 						{loading.air ? (
 							<span className="loader"></span>
 						) : (
-							<input className="switch" type="checkbox" checked={state.air} onChange={() => toggle('air')} />
+							<input className="switch" type="checkbox" checked={displayState.air} onChange={() => toggle('air')} />
 						)}
 					</div>
 					<div className="toggle">
-						<FaLightbulb size={40} style={{color: state.lamp ? "#facc15" : "#9ca3af"}} />
+						<FaLightbulb size={40} style={{color: displayState.lamp ? "#facc15" : "#9ca3af"}} />
 						<span>Đèn</span>
 						{loading.lamp ? (
 							<span className="loader"></span>
 						) : (
-							<input className="switch" type="checkbox" checked={state.lamp} onChange={() => toggle('lamp')} />
+							<input className="switch" type="checkbox" checked={displayState.lamp} onChange={() => toggle('lamp')} />
 						)}
 					</div>
 				</div>
